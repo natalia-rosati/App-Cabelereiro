@@ -1,63 +1,61 @@
 'use strict';
 
-var callBind = require('../');
-var hasStrictMode = require('has-strict-mode')();
-var forEach = require('for-each');
-var inspect = require('object-inspect');
-var v = require('es-value-fixtures');
-
 var test = require('tape');
 
-test('callBindBasic', function (t) {
-	forEach(v.nonFunctions, function (nonFunction) {
-		t['throws'](
-			// @ts-expect-error
-			function () { callBind([nonFunction]); },
+var callBound = require('../');
+
+/** @template {true} T @template U @typedef {T extends U ? T : never} AssertType */
+
+test('callBound', function (t) {
+	// static primitive
+	t.equal(callBound('Array.length'), Array.length, 'Array.length yields itself');
+	t.equal(callBound('%Array.length%'), Array.length, '%Array.length% yields itself');
+
+	// static non-function object
+	t.equal(callBound('Array.prototype'), Array.prototype, 'Array.prototype yields itself');
+	t.equal(callBound('%Array.prototype%'), Array.prototype, '%Array.prototype% yields itself');
+	t.equal(callBound('Array.constructor'), Array.constructor, 'Array.constructor yields itself');
+	t.equal(callBound('%Array.constructor%'), Array.constructor, '%Array.constructor% yields itself');
+
+	// static function
+	t.equal(callBound('Date.parse'), Date.parse, 'Date.parse yields itself');
+	t.equal(callBound('%Date.parse%'), Date.parse, '%Date.parse% yields itself');
+
+	// prototype primitive
+	t.equal(callBound('Error.prototype.message'), Error.prototype.message, 'Error.prototype.message yields itself');
+	t.equal(callBound('%Error.prototype.message%'), Error.prototype.message, '%Error.prototype.message% yields itself');
+
+	var x = callBound('Object.prototype.toString');
+	var y = callBound('%Object.prototype.toString%');
+
+	// prototype function
+	t.notEqual(x, Object.prototype.toString, 'Object.prototype.toString does not yield itself');
+	t.notEqual(y, Object.prototype.toString, '%Object.prototype.toString% does not yield itself');
+	t.equal(x(true), Object.prototype.toString.call(true), 'call-bound Object.prototype.toString calls into the original');
+	t.equal(y(true), Object.prototype.toString.call(true), 'call-bound %Object.prototype.toString% calls into the original');
+
+	t['throws'](
+		// @ts-expect-error
+		function () { callBound('does not exist'); },
+		SyntaxError,
+		'nonexistent intrinsic throws'
+	);
+	t['throws'](
+		// @ts-expect-error
+		function () { callBound('does not exist', true); },
+		SyntaxError,
+		'allowMissing arg still throws for unknown intrinsic'
+	);
+
+	t.test('real but absent intrinsic', { skip: typeof WeakRef !== 'undefined' }, function (st) {
+		st['throws'](
+			function () { callBound('WeakRef'); },
 			TypeError,
-			inspect(nonFunction) + ' is not a function'
+			'real but absent intrinsic throws'
 		);
+		st.equal(callBound('WeakRef', true), undefined, 'allowMissing arg avoids exception');
+		st.end();
 	});
-
-	var sentinel = { sentinel: true };
-	/** @type {<T, A extends number, B extends number>(this: T, a: A, b: B) => [T | undefined, A, B]} */
-	var func = function (a, b) {
-		// eslint-disable-next-line no-invalid-this
-		return [!hasStrictMode && this === global ? undefined : this, a, b];
-	};
-	t.equal(func.length, 2, 'original function length is 2');
-
-	/** type {(thisArg: unknown, a: number, b: number) => [unknown, number, number]} */
-	var bound = callBind([func]);
-	/** type {((a: number, b: number) => [typeof sentinel, typeof a, typeof b])} */
-	var boundR = callBind([func, sentinel]);
-	/** type {((b: number) => [typeof sentinel, number, typeof b])} */
-	var boundArg = callBind([func, sentinel, /** @type {const} */ (1)]);
-
-	// @ts-expect-error
-	t.deepEqual(bound(), [undefined, undefined, undefined], 'bound func with no args');
-
-	// @ts-expect-error
-	t.deepEqual(func(), [undefined, undefined, undefined], 'unbound func with too few args');
-	// @ts-expect-error
-	t.deepEqual(bound(1, 2), [hasStrictMode ? 1 : Object(1), 2, undefined], 'bound func too few args');
-	// @ts-expect-error
-	t.deepEqual(boundR(), [sentinel, undefined, undefined], 'bound func with receiver, with too few args');
-	// @ts-expect-error
-	t.deepEqual(boundArg(), [sentinel, 1, undefined], 'bound func with receiver and arg, with too few args');
-
-	t.deepEqual(func(1, 2), [undefined, 1, 2], 'unbound func with right args');
-	t.deepEqual(bound(1, 2, 3), [hasStrictMode ? 1 : Object(1), 2, 3], 'bound func with right args');
-	t.deepEqual(boundR(1, 2), [sentinel, 1, 2], 'bound func with receiver, with right args');
-	t.deepEqual(boundArg(2), [sentinel, 1, 2], 'bound func with receiver and arg, with right arg');
-
-	// @ts-expect-error
-	t.deepEqual(func(1, 2, 3), [undefined, 1, 2], 'unbound func with too many args');
-	// @ts-expect-error
-	t.deepEqual(bound(1, 2, 3, 4), [hasStrictMode ? 1 : Object(1), 2, 3], 'bound func with too many args');
-	// @ts-expect-error
-	t.deepEqual(boundR(1, 2, 3), [sentinel, 1, 2], 'bound func with receiver, with too many args');
-	// @ts-expect-error
-	t.deepEqual(boundArg(2, 3), [sentinel, 1, 2], 'bound func with receiver and arg, with too many args');
 
 	t.end();
 });

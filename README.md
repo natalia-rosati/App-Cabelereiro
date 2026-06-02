@@ -1,82 +1,62 @@
-# Installation
-> `npm install --save @types/ms`
+# call-bind-apply-helpers <sup>[![Version Badge][npm-version-svg]][package-url]</sup>
 
-# Summary
-This package contains type definitions for ms (https://github.com/vercel/ms).
+[![github actions][actions-image]][actions-url]
+[![coverage][codecov-image]][codecov-url]
+[![dependency status][deps-svg]][deps-url]
+[![dev dependency status][dev-deps-svg]][dev-deps-url]
+[![License][license-image]][license-url]
+[![Downloads][downloads-image]][downloads-url]
 
-# Details
-Files were exported from https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/ms.
-## [index.d.ts](https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/ms/index.d.ts)
-````ts
-/**
- * Short/Long format for `value`.
- *
- * @param {Number} value
- * @param {{long: boolean}} options
- * @return {String}
- */
-declare function ms(value: number, options?: { long: boolean }): string;
+[![npm badge][npm-badge-png]][package-url]
 
-/**
- * Parse the given `value` and return milliseconds.
- *
- * @param {ms.StringValue} value
- * @return {Number}
- */
-declare function ms(value: ms.StringValue): number;
+Helper functions around Function call/apply/bind, for use in `call-bind`.
 
-declare namespace ms {
-    // Unit, UnitAnyCase, and StringValue are backported from ms@3
-    // https://github.com/vercel/ms/blob/8b5923d1d86c84a9f6aba8022d416dcf2361aa8d/src/index.ts
+The only packages that should likely ever use this package directly are `call-bind` and `get-intrinsic`.
+Please use `call-bind` unless you have a very good reason not to.
 
-    type Unit =
-        | "Years"
-        | "Year"
-        | "Yrs"
-        | "Yr"
-        | "Y"
-        | "Weeks"
-        | "Week"
-        | "W"
-        | "Days"
-        | "Day"
-        | "D"
-        | "Hours"
-        | "Hour"
-        | "Hrs"
-        | "Hr"
-        | "H"
-        | "Minutes"
-        | "Minute"
-        | "Mins"
-        | "Min"
-        | "M"
-        | "Seconds"
-        | "Second"
-        | "Secs"
-        | "Sec"
-        | "s"
-        | "Milliseconds"
-        | "Millisecond"
-        | "Msecs"
-        | "Msec"
-        | "Ms";
+## Getting started
 
-    type UnitAnyCase = Unit | Uppercase<Unit> | Lowercase<Unit>;
+```sh
+npm install --save call-bind-apply-helpers
+```
 
-    type StringValue =
-        | `${number}`
-        | `${number}${UnitAnyCase}`
-        | `${number} ${UnitAnyCase}`;
+## Usage/Examples
+
+```js
+const assert = require('assert');
+const callBindBasic = require('call-bind-apply-helpers');
+
+function f(a, b) {
+	assert.equal(this, 1);
+	assert.equal(a, 2);
+	assert.equal(b, 3);
+	assert.equal(arguments.length, 2);
 }
 
-export = ms;
+const fBound = callBindBasic([f, 1]);
 
-````
+delete Function.prototype.call;
+delete Function.prototype.bind;
 
-### Additional Details
- * Last updated: Thu, 16 Jan 2025 21:02:45 GMT
- * Dependencies: none
+fBound(2, 3);
+```
 
-# Credits
-These definitions were written by [Zhiyuan Wang](https://github.com/danny8002).
+## Tests
+
+Clone the repo, `npm install`, and run `npm test`
+
+[package-url]: https://npmjs.org/package/call-bind-apply-helpers
+[npm-version-svg]: https://versionbadg.es/ljharb/call-bind-apply-helpers.svg
+[deps-svg]: https://david-dm.org/ljharb/call-bind-apply-helpers.svg
+[deps-url]: https://david-dm.org/ljharb/call-bind-apply-helpers
+[dev-deps-svg]: https://david-dm.org/ljharb/call-bind-apply-helpers/dev-status.svg
+[dev-deps-url]: https://david-dm.org/ljharb/call-bind-apply-helpers#info=devDependencies
+[npm-badge-png]: https://nodei.co/npm/call-bind-apply-helpers.png?downloads=true&stars=true
+[license-image]: https://img.shields.io/npm/l/call-bind-apply-helpers.svg
+[license-url]: LICENSE
+[downloads-image]: https://img.shields.io/npm/dm/call-bind-apply-helpers.svg
+[downloads-url]: https://npm-stat.com/charts.html?package=call-bind-apply-helpers
+[codecov-image]: https://codecov.io/gh/ljharb/call-bind-apply-helpers/branch/main/graphs/badge.svg
+[codecov-url]: https://app.codecov.io/gh/ljharb/call-bind-apply-helpers/
+[actions-image]: https://img.shields.io/endpoint?url=https://github-actions-badge-u3jn4tfpocch.runkit.sh/ljharb/call-bind-apply-helpers
+[actions-url]: https://github.com/ljharb/call-bind-apply-helpers/actions

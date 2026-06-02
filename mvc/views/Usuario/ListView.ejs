@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SGP - Lista de Usuários</title>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700&display=swap');
+
+        :root {
+            --bg-body: #fec5bb;
+            --bg-sidebar: #fcd5ce;
+            --bg-input: #fae1dd;
+            --primary: #f8edeb;
+            --accent: #e8e8e4;
+            --danger: #d8e2dc;
+            --success: #c99e8b;
+            --text-main: #a58066;
+            --text-muted: #a17f61;
+            --border-radius: 4px;
+            --font: "Nunito", sans-serif;
+            --sidebar-width: 60px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background-color: var(--bg-body); color: var(--text-main); font-family: var(--font); display: flex; height: 100vh; overflow: hidden; }
+
+        /* --- Sidebar --- */
+        .lg-sidebar { width: var(--sidebar-width); background-color: var(--bg-sidebar); display: flex; flex-direction: column; align-items: center; padding: 20px 0; flex-shrink: 0; }
+        .lg-nav-item { color: var(--text-muted); padding: 12px; margin-bottom: 8px; border-radius: var(--border-radius); transition: all 0.2s ease; display: flex; align-items: center; }
+        .lg-nav-item:hover, .lg-nav-item.active { background-color: rgba(255, 255, 255, 0.05); color: var(--text-main); }
+        .lg-nav-item svg { width: 20px; height: 20px; }
+
+        /* --- Main Container --- */
+        .lg-main-container { flex-grow: 1; padding: 40px; overflow-y: auto; display: flex; flex-direction: column; gap: 24px; }
+        
+        .lg-breadcrumb { display: flex; gap: 8px; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); align-items: center; }
+        .lg-breadcrumb span::after { content: '/'; margin-left: 8px; }
+        .lg-breadcrumb b { color: var(--text-main); }
+
+        .lg-header-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+        .lg-display-1 { font-size: 26px; font-weight: 700; letter-spacing: -0.5px; }
+        
+        /* --- Tabela Minimalista --- */
+        .lg-table-wrapper { 
+            background-color: var(--bg-sidebar); 
+            border-radius: 8px; 
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            /* box-shadow: 0 10px 30px rgba(0,0,0,0.2); Para adicionar sombra na tabela descomente essa linha*/ 
+        }
+
+        .lg-table { width: 100%; border-collapse: collapse; text-align: left; }
+        
+        .lg-table th { 
+            padding: 18px 24px; 
+            font-size: 10px; 
+            text-transform: uppercase; 
+            color: var(--primary); 
+            font-weight: 800; 
+            letter-spacing: 1px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .lg-table td { 
+            padding: 16px 24px; 
+            border-bottom: 1px solid rgba(255, 255, 255, 0.02); 
+            vertical-align: middle;
+        }
+
+        .lg-table tr:last-child td { border-bottom: none; }
+
+        /* Estilo da Coluna Usuário (Avatar + Info) */
+        .lg-user-cell { display: flex; align-items: center; gap: 12px; }
+        .lg-avatar { 
+            width: 36px; height: 36px; 
+            background: linear-gradient(45deg, #333, #444); 
+            border-radius: 8px; 
+            display: flex; align-items: center; justify-content: center;
+            color: var(--text-muted);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .lg-user-info { display: flex; flex-direction: column; }
+        .lg-user-name { font-size: 14px; font-weight: 600; color: var(--text-main); }
+        .lg-user-id { font-size: 11px; color: var(--primary); font-family: monospace; }
+
+        .lg-email-text { font-size: 13px; color: var(--text-muted); }
+
+        /* Badge Status (Minimalista) */
+        .lg-badge {
+            padding: 4px 10px;
+            border-radius: 100px;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-muted);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* Ações */
+        .lg-actions { display: flex; gap: 6px; justify-content: flex-end; }
+        .lg-btn-icon { 
+            width: 32px; height: 32px;
+            background: transparent; 
+            border: 1px solid rgba(255, 255, 255, 0.05); 
+            color: var(--text-muted); 
+            border-radius: 6px; 
+            cursor: pointer; 
+            transition: all 0.2s; 
+            display: flex; align-items: center; justify-content: center; 
+            text-decoration: none; 
+        }
+        .lg-btn-icon:hover { background: var(--bg-card); color: var(--text-main); border-color: var(--primary); }
+        .lg-btn-icon.danger-hover:hover { background: rgba(150, 32, 32, 0.2); color: #ff5f5f; border-color: var(--danger); }
+        .lg-btn-icon svg { width: 14px; height: 14px; }
+
+        /* Botão Adicionar */
+        .lg-btn-add { 
+            text-decoration: none; background: var(--accent); color: white; 
+            padding: 10px 18px; border-radius: 6px; font-size: 11px; 
+            font-weight: 700; text-transform: uppercase; display: flex; 
+            align-items: center; gap: 8px; border: none; cursor: pointer;
+            transition: 0.3s;
+        }
+        .lg-btn-add:hover { filter: brightness(1.2); transform: translateY(-1px); }
+
+        /* Modal (Reutilizado e Ajustado) */
+        .lg-modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; z-index: 1000; opacity: 0; transition: 0.3s; }
+        .lg-modal-overlay.active { display: flex; opacity: 1; }
+        .lg-modal { background: var(--bg-sidebar); width: 90%; max-width: 380px; padding: 32px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.05); text-align: center; }
+        .lg-btn-confirm { background: var(--danger); color: white; padding: 10px 24px; border-radius: 4px; font-weight: 700; border: none; cursor: pointer; font-size: 12px; text-transform: uppercase; }
+        .lg-btn-cancel { background: transparent; color: var(--text-muted); padding: 10px 24px; border-radius: 4px; font-weight: 700; border: 1px solid var(--primary); cursor: pointer; font-size: 12px; text-transform: uppercase; }
+    </style>
+</head>
+
+<body>
+    <div class="lg-modal-overlay" id="modalApagar">
+        <div class="lg-modal">
+            <div style="color: var(--danger); margin-bottom: 16px;"><i data-lucide="alert-circle" style="width: 48px; height: 48px;"></i></div>
+            <h2 class="lg-modal-title">Confirmar exclusão?</h2>
+            <p class="lg-modal-text">O usuário selecionado será removido permanentemente da base de dados.</p>
+            <div class="lg-modal-actions">
+                <button class="lg-btn-cancel" onclick="fecharModal()">Voltar</button>
+                <button class="lg-btn-confirm" id="confirmarDelete">Confirmar</button>
+            </div>
+        </div>
+    </div>
+
+    
+    <nav class="lg-sidebar">
+        <a href="/atendimento/" class="lg-nav-item" title="Dashboard Atendimento">
+            <i data-lucide="layout-grid"></i>
+        </a>
+        <a href="/atendimento/create" class="lg-nav-item" title="Novo Atendimento">
+            <i data-lucide="calendar-plus"></i>
+        </a>
+        <a href="/atendimento/list" class="lg-nav-item" title="Lista de Atendimentos">
+            <i data-lucide="calendar-search"></i>
+        </a>
+
+        <div style="height: 1px; width: 30px; background: rgba(255,255,255,0.05); margin: 10px 0;"></div>
+
+        <a href="/user/create" class="lg-nav-item" title="Novo Usuário">
+            <i data-lucide="user-plus"></i>
+        </a>
+        <a href="/user/list" class="lg-nav-item" title="Lista de Usuários">
+            <i data-lucide="users"></i>
+        </a>
+
+        <div style="flex-grow: 1;"></div>
+
+        <a href="/logout" class="lg-nav-item" title="Sair">
+            <i data-lucide="log-out"></i>
+        </a>
+    </nav>
+
+    <main class="lg-main-container">
+
+        <div class="lg-breadcrumb">
+            <span>Plataforma</span>
+            <b>Listar Usuários</b>
+        </div>
+
+
+        <header class="lg-header-flex">           
+            <h1 class="lg-display-1">Diretório de Membros</h1>
+            <a href="/user/create" class="lg-btn-add">
+                <i data-lucide="plus"></i> Novo Usuário
+            </a>
+           
+        </header>
+        
+
+        <div class="lg-table-wrapper">
+            <table class="lg-table">
+                <thead>
+                    <tr>
+                        <th>Usuário</th>
+                        <th>E-mail Corporativo</th>
+                        <th>Status</th>
+                        <th style="text-align: right;">Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% for(usuario of usuarios) { %> 
+                    <tr>
+                        <td>
+                            <div class="lg-user-cell">
+                                <div class="lg-avatar">
+                                    <i data-lucide="user" style="width: 18px;"></i>
+                                </div>
+                                <div class="lg-user-info">
+                                    <span class="lg-user-name"><%= usuario.nome %></span>
+                                    <span class="lg-user-id">ID_<%= usuario.id %></span>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="lg-email-text"><%= usuario.email %></span>
+                        </td>
+                        <td>
+                            <span class="lg-badge">Ativo</span>
+                        </td>
+                        <td>
+                            <div class="lg-actions">
+                                <a href="/user/edit/<%= usuario.id %>" class="lg-btn-icon" title="Editar">
+                                    <i data-lucide="pencil"></i>
+                                </a>
+                                <button onclick="confirmarExclusao('<%= usuario.id %>')" class="lg-btn-icon danger-hover" title="Excluir">
+                                    <i data-lucide="trash-2"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    <% } %> 
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <script>
+        lucide.createIcons();
+
+        let usuarioIdParaApagar = null;
+        const modal = document.getElementById('modalApagar');
+
+        function confirmarExclusao(id) {
+            usuarioIdParaApagar = id;
+            modal.classList.add('active');
+        }
+
+        function fecharModal() {
+            modal.classList.remove('active');
+            usuarioIdParaApagar = null;
+        }
+
+        document.getElementById('confirmarDelete').addEventListener('click', async () => {
+            if (!usuarioIdParaApagar) return;
+            try {
+                const response = await fetch("/user/delete/" + usuarioIdParaApagar, { method: 'DELETE' });
+                if(response.ok) location.reload();
+            } catch (err) { console.error(err); }
+        });
+    </script>
+</body>
+</html>

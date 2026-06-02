@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SGP - Dashboard Usuário</title>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700&display=swap');
+
+        :root {
+            --bg-body: #fec5bb;
+            --bg-sidebar: #fcd5ce;
+            --bg-input: #fae1dd;
+            --primary: #f8edeb;
+            --accent: #e8e8e4;
+            --danger: #d8e2dc;
+            --success: #c99e8b;
+            --text-main: #a58066;
+            --text-muted: #a17f61;
+            --border-radius: 4px;
+            --font: "Nunito", sans-serif;
+            --sidebar-width: 60px;
+        }
+
+        /* [Estilos Originais Mantidos] */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background-color: var(--bg-body); color: var(--text-main); font-family: var(--font); display: flex; height: 100vh; overflow: hidden; }
+
+        .lg-sidebar { width: var(--sidebar-width); background-color: var(--bg-sidebar); display: flex; flex-direction: column; align-items: center; padding: 20px 0; flex-shrink: 0; }
+        .lg-nav-item { color: var(--text-muted); padding: 12px; margin-bottom: 8px; border-radius: 4px; transition: all 0.2s ease; display: flex; align-items: center; text-decoration: none; }
+        .lg-nav-item:hover, .lg-nav-item.active { background-color: rgba(255, 255, 255, 0.05); color: var(--text-main); }
+        .lg-nav-item svg { width: 20px; height: 20px; }
+
+        .lg-main-container { flex-grow: 1; padding: 40px; overflow-y: auto; display: flex; flex-direction: column; gap: 24px; }
+        .lg-breadcrumb { display: flex; gap: 8px; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); align-items: center; }
+        .lg-breadcrumb b { color: var(--text-main); }
+        .lg-breadcrumb span::after { content: '/'; margin-left: 8px; }
+
+        .lg-greeting-box { display: flex; flex-direction: column; gap: 8px; max-width: 800px; }
+        .lg-display-1 { font-size: 32px; font-weight: 700; color: var(--text-main); }
+        .lg-display-2 { font-size: 16px; color: var(--text-muted); line-height: 1.6; }
+
+        .lg-summary-card { margin-top: 20px; padding: 24px; border-radius: var(--border-radius); background: var(--bg-sidebar); border: 1px solid rgba(255, 255, 255, 0.05); width: fit-content; min-width: 300px; }
+        .lg-summary-card h3 { font-size: 12px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px; color: var(--accent); font-weight: 700; }
+        .lg-summary-item { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 14px; }
+        .lg-summary-label { color: var(--primary); }
+        .lg-summary-value { color: var(--text-muted); font-weight: 600; }
+
+        /* --- ESTILOS DA LUNA --- */
+        .luna-widget {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            z-index: 9999;
+        }
+
+        .luna-orb {
+            width: 60px;
+            height: 60px;
+            background: radial-gradient(circle, #ffd7ba, #fec89a);
+            border-radius: 50%;
+            box-shadow: 0 0 20px rgba(241, 174, 129, 0.4);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .luna-orb:hover { transform: scale(1.1); box-shadow: 0 0 30px rgba(0, 210, 255, 0.6); }
+
+        .luna-orb.listening {
+            background: radial-gradient(circle, #ff0055, #ff0055);
+            animation: luna-pulse 1.5s infinite;
+            box-shadow: 0 0 30px rgba(255, 0, 85, 0.6);
+        }
+
+        @keyframes luna-pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.8; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .luna-label {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--text-muted);
+            background: rgba(0,0,0,0.3);
+            padding: 4px 10px;
+            border-radius: 20px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="lg-sidebar">
+        <a href="/atendimento/" class="lg-nav-item" title="Dashboard Atendimento">
+            <i data-lucide="layout-grid"></i>
+        </a>
+        <a href="/atendimento/create" class="lg-nav-item" title="Novo Atendimento">
+            <i data-lucide="calendar-plus"></i>
+        </a>
+        <a href="/atendimento/list" class="lg-nav-item" title="Lista de Atendimentos">
+            <i data-lucide="calendar-search"></i>
+        </a>
+
+        <div style="height: 1px; width: 30px; background: rgba(255,255,255,0.05); margin: 10px 0;"></div>
+
+        <a href="/user/create" class="lg-nav-item" title="Novo Usuário">
+            <i data-lucide="user-plus"></i>
+        </a>
+        <a href="/user/list" class="lg-nav-item" title="Lista de Usuários">
+            <i data-lucide="users"></i>
+        </a>
+
+        <div style="flex-grow: 1;"></div>
+
+        <a href="/logout" class="lg-nav-item" title="Sair">
+            <i data-lucide="log-out"></i>
+        </a>
+    </nav>
+
+    <main class="lg-main-container">
+        <div class="lg-breadcrumb">
+            <span>Plataforma</span>
+            <b>Dashboard</b>
+        </div>
+
+        <div class="lg-greeting-box">
+            <h1 class="lg-display-1" id="saudacaoTexto">Carregando...</h1>
+            <p class="lg-display-2">
+                Bem-vindo de volta ao sistema. Todas as suas ferramentas de gerenciamento 
+                e configurações de perfil estão prontas para o uso.
+            </p>
+            
+            <div class="lg-summary-card">
+                <h3>Resumo da Conta</h3>
+                <div class="lg-summary-item">
+                    <span class="lg-summary-label">Status</span>
+                    <span class="lg-summary-value" style="color: #ffffff;">Ativo</span>
+                </div>
+                <div class="lg-summary-item">
+                    <span class="lg-summary-label">Último Acesso</span>
+                    <span class="lg-summary-value">Hoje, 14:30</span>
+                </div>
+                <div class="lg-summary-item">
+                    <span class="lg-summary-label">Nível de Acesso</span>
+                    <span class="lg-summary-value">Administrador</span>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div class="luna-widget">
+        <div class="luna-label" id="luna-status">Luna Idle</div>
+        <div class="luna-orb" id="luna-orb">
+            <i data-lucide="mic" style="color: white; width: 24px;"></i>
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+
+        // 1. Lógica de Saudação
+        function atualizarSaudacao() {
+            const hora = new Date().getHours();
+            const texto = document.getElementById('saudacaoTexto');
+            let saudacao = (hora >= 5 && hora < 12) ? "Bom dia" : (hora >= 12 && hora < 18) ? "Boa tarde" : "Boa noite";
+            texto.innerText = `${saudacao}, Usuário!`;
+        }
+        atualizarSaudacao();
+
+        // 2. Lógica da Luna (Voz)
+        const lunaOrb = document.getElementById('luna-orb');
+        const lunaStatus = document.getElementById('luna-status');
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+        if (SpeechRecognition) {
+            const recognition = new SpeechRecognition();
+            recognition.lang = 'pt-BR';
+
+            function responder(texto) {
+                const speech = new SpeechSynthesisUtterance(texto);
+                speech.lang = 'pt-BR';
+                window.speechSynthesis.speak(speech);
+            }
+
+            lunaOrb.addEventListener('click', () => {
+                recognition.start();
+            });
+
+            recognition.onstart = () => {
+                lunaOrb.classList.add('listening');
+                lunaStatus.innerText = "Ouvindo...";
+            };
+
+            recognition.onresult = (event) => {
+                lunaOrb.classList.remove('listening');
+                const comando = event.results[0][0].transcript.toLowerCase();
+                lunaStatus.innerText = "Luna Idle";
+                
+                console.log("Luna ouviu:", comando);
+
+                // Comandos de Navegação
+                if (comando.includes("ir para início") || comando.includes("dashboard") || comando.includes("home")) {
+                    responder("Indo para o painel principal");
+                    document.getElementById('nav-home').click();
+                } 
+                else if (comando.includes("cadastrar") || comando.includes("novo usuário") || comando.includes("adicionar")) {
+                    responder("Abrindo tela de cadastro");
+                    window.location.href = "/user/create";
+                }
+                else if (comando.includes("listar") || comando.includes("agenda") || comando.includes("buscar")) {
+                    responder("Consultando lista de usuários e agendamentos");
+                    window.location.href = "/user/list";
+                }
+                else if (comando.includes("sair") || comando.includes("logout")) {
+                    responder("Encerrando sua sessão. Até logo!");
+                    window.location.href = "/logout";
+                }
+                // Comandos Informativos
+                else if (comando.includes("quem é você")) {
+                    responder("Eu sou a Luna, sua assistente virtual neste dashboard. Posso te ajudar a navegar entre as telas.");
+                }
+                else {
+                    responder("Desculpe, não reconheci o comando de navegação.");
+                }
+            };
+
+            recognition.onerror = (event) => {
+                lunaOrb.classList.remove('listening');
+                lunaStatus.innerText = "Erro";
+                console.error("Erro Recognition:", event.error);
+            };
+        } else {
+            lunaStatus.innerText = "Não suportado";
+        }
+    </script>
+</body>
+</html>

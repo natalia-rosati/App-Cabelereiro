@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barber Digital - Agendamento</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+
+        :root {
+            --primary-red: #8B2D33;
+            --bg-pink: #F8EBEB;
+            --input-bg: #FDF4F4;
+            --white: #FFFFFF;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: #333; /* Fundo escuro para simular o ambiente do print */
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .mobile-container {
+            width: 100%;
+            max-width: 400px;
+            background-color: var(--bg-pink);
+            min-height: 90vh;
+            position: relative;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            overflow-y: auto;
+        }
+
+        /* Header Section */
+        header {
+            background-color: var(--primary-red);
+            padding: 40px 25px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--white);
+        }
+
+        .header-text .greeting {
+            font-size: 18px;
+            font-weight: 300;
+            opacity: 0.9;
+        }
+
+        .header-text .user-name {
+            font-size: 26px;
+            font-weight: 700;
+            margin-top: 4px;
+        }
+
+        .profile-container {
+            width: 85px;
+            height: 85px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 3px solid rgba(255,255,255,0.2);
+        }
+
+        .profile-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Banner Section */
+        .banner {
+            width: 100%;
+            height: 180px;
+            overflow: hidden;
+        }
+
+        .banner img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Form Section */
+        form {
+            padding: 20px 25px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-group label {
+            color: var(--primary-red);
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--input-bg);
+            border: 1px solid var(--primary-red);
+            border-radius: 2px;
+            font-size: 15px;
+            color: #444;
+            outline: none;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 10px;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+        }
+
+        /* Button */
+        .btn-agendar {
+            background-color: var(--primary-red);
+            color: var(--white);
+            border: none;
+            padding: 16px;
+            font-size: 16px;
+            font-weight: 600;
+            text-transform: none;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: opacity 0.2s;
+        }
+
+        .btn-agendar:active {
+            opacity: 0.8;
+        }
+
+        /* Custom appearance for date/time inputs */
+        input[type="date"], input[type="time"] {
+            position: relative;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="mobile-container">
+        <!-- Header como no print -->
+        <header>
+            <div class="header-text">
+                <div class="greeting">Olá,</div>
+                <div class="user-name">Natalia</div>
+            </div>
+            <div class="profile-container">
+                <!-- Avatar placeholder similar ao do print -->
+                <img src="https://i.pinimg.com/736x/8b/6e/c6/8b6ec6042147a944bb97613c36c96b6d.jpg" alt="Natalia">
+            </div>
+        </header>
+
+        <!-- Imagem de destaque -->
+        <div class="banner">
+            <img src="https://images.unsplash.com/photo-1521590832167-7bcbfaa6381f?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Barbearia">
+        </div>
+
+        <!-- Formulário -->
+        <form id="formAtendimento">
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Data do Atendimento</label>
+                    <input type="date" id="dataAtendimento" required>
+                </div>
+                <div class="form-group">
+                    <label>Horário</label>
+                    <input type="time" id="horarioAtendimento" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Profissional</label>
+                <select id="profissional" required>
+                    <option value="" disabled selected>Selecione um profissional</option>
+                    <% for(const usuario of usuarios){  %>
+                        <option value="<%= usuario.id %>"><%= usuario.nome %></option>
+                    <% } %>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Data de Nascimento</label>
+                <input type="date" id="dataNascimento" required>
+            </div>
+
+            <div class="form-group">
+                <label>Contato</label>
+                <input type="tel" id="telefone" placeholder="(11) 99999-9999" required>
+            </div>
+
+            <div class="form-group">
+                <label>Tipo de Serviço</label>
+                <input type="text" id="tipoServico" placeholder="Ex: Corte de Cabelo" required>
+            </div>
+
+            <button type="submit" class="btn-agendar" id="btnSubmit">Agendar</button>
+        </form>
+    </div>
+
+    <script>
+        const form = document.getElementById("formAtendimento");
+
+        form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            
+            const btn = document.getElementById("btnSubmit");
+            const originalText = btn.innerText;
+            btn.innerText = "Processando...";
+            btn.disabled = true;
+
+            const payload = {
+                nomeCliente: "Natalia", // Usando o nome da interface
+                telefone: document.getElementById("telefone").value,
+                horarioAtendimento: document.getElementById("horarioAtendimento").value,
+                dataAtendimento: document.getElementById("dataAtendimento").value,
+                dataNascimento: document.getElementById("dataNascimento").value,
+                tipoServico: document.getElementById("tipoServico").value,
+                profissional: document.getElementById("profissional").value
+            };
+
+            try {
+                const response = await fetch("/atendimento/create", {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.atendimento) {
+                    alert('Agendamento realizado com sucesso!');
+                    form.reset();
+                } else {
+                    alert(data.error || 'Erro ao realizar agendamento. Verifique o horário.');
+                }
+            } catch (err) {
+                alert('Erro de conexão com o servidor.');
+            } finally {
+                btn.innerText = originalText;
+                btn.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>

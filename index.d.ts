@@ -1,13 +1,3 @@
-# Installation
-> `npm install --save @types/ms`
-
-# Summary
-This package contains type definitions for ms (https://github.com/vercel/ms).
-
-# Details
-Files were exported from https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/ms.
-## [index.d.ts](https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/ms/index.d.ts)
-````ts
 /**
  * Short/Long format for `value`.
  *
@@ -71,12 +61,3 @@ declare namespace ms {
 }
 
 export = ms;
-
-````
-
-### Additional Details
- * Last updated: Thu, 16 Jan 2025 21:02:45 GMT
- * Dependencies: none
-
-# Credits
-These definitions were written by [Zhiyuan Wang](https://github.com/danny8002).

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="NONE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="696b3726-6980-4391-a149-5b14f7ac1333" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/barber-digital/aplicativo_web/mvc/controllers/AtendimentoController.js" beforeDir="false" afterPath="$PROJECT_DIR$/barber-digital/aplicativo_web/mvc/controllers/AtendimentoController.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/barber-digital/aplicativo_web/mvc/views/Atendimento/CreateView.ejs" beforeDir="false" afterPath="$PROJECT_DIR$/barber-digital/aplicativo_web/mvc/views/Atendimento/CreateView.ejs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/barber-digital/aplicativo_web/mvc/views/Atendimento/EditView.ejs" beforeDir="false" afterPath="$PROJECT_DIR$/barber-digital/aplicativo_web/mvc/views/Atendimento/EditView.ejs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/barber-digital/aplicativo_web/mvc/views/Atendimento/ListView.ejs" beforeDir="false" afterPath="$PROJECT_DIR$/barber-digital/aplicativo_web/mvc/views/Atendimento/ListView.ejs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/barber-digital/aplicativo_web/mvc/views/Usuario/CreateView.ejs" beforeDir="false" afterPath="$PROJECT_DIR$/barber-digital/aplicativo_web/mvc/views/Usuario/CreateView.ejs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/barber-digital/aplicativo_web/mvc/views/Usuario/EditView.ejs" beforeDir="false" afterPath="$PROJECT_DIR$/barber-digital/aplicativo_web/mvc/views/Usuario/EditView.ejs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/barber-digital/aplicativo_web/mvc/views/Usuario/ListView.ejs" beforeDir="false" afterPath="$PROJECT_DIR$/barber-digital/aplicativo_web/mvc/views/Usuario/ListView.ejs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/barber-digital/aplicativo_web/mvc/views/Usuario/UsuarioView.ejs" beforeDir="false" afterPath="$PROJECT_DIR$/barber-digital/aplicativo_web/mvc/views/Usuario/UsuarioView.ejs" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ClangdSettings">
+    <option name="formatViaClangd" value="false" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/barber-digital" />
+  </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 2
+}]]></component>
+  <component name="ProjectId" id="3ELsKSmuVMzudync6RyLRm3gy1Q" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.cidr.known.project.marker": "true",
+    "RunOnceActivity.readMode.enableVisualFormatting": "true",
+    "cf.first.check.clang-format": "false",
+    "cidr.known.project.marker": "true",
+    "git-widget-placeholder": "master",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "U:/Users/49237919859/Desktop/belezA SUPREMA"
+  }
+}]]></component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="696b3726-6980-4391-a149-5b14f7ac1333" name="Changes" comment="" />
+      <created>1779969119890</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1779969119890</updated>
+    </task>
+    <servers />
+  </component>
+</project>

@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SGP - Lista de Atendimentos</title>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700&display=swap');
+
+        :root {
+            --bg-body: #fec5bb;
+            --bg-sidebar: #fcd5ce;
+            --bg-input: #fae1dd;
+            --primary: #f8edeb;
+            --accent: #e8e8e4;
+            --danger: #d8e2dc;
+            --success: #c99e8b;
+            --text-main: #a58066;
+            --text-muted: #a17f61;
+            --border-radius: 4px;
+            --font: "Nunito", sans-serif;
+            --sidebar-width: 60px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background-color: var(--bg-body); color: var(--text-main); font-family: var(--font); display: flex; height: 100vh; overflow: hidden; }
+
+        /* --- Sidebar --- */
+        .lg-sidebar { width: var(--sidebar-width); background-color: var(--bg-sidebar); display: flex; flex-direction: column; align-items: center; padding: 20px 0; flex-shrink: 0; }
+        .lg-nav-item { color: var(--text-muted); padding: 12px; margin-bottom: 8px; border-radius: var(--border-radius); transition: all 0.2s ease; display: flex; align-items: center; }
+        .lg-nav-item:hover, .lg-nav-item.active { background-color: rgba(255, 255, 255, 0.05); color: var(--text-main); }
+        .lg-nav-item svg { width: 20px; height: 20px; }
+
+        /* --- Main Container --- */
+        .lg-main-container { flex-grow: 1; padding: 40px; overflow-y: auto; display: flex; flex-direction: column; gap: 24px; }
+        
+        .lg-breadcrumb { display: flex; gap: 8px; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); align-items: center; }
+        .lg-breadcrumb span::after { content: '/'; margin-left: 8px; }
+        .lg-breadcrumb b { color: var(--text-main); }
+
+        .lg-header-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+        .lg-display-1 { font-size: 26px; font-weight: 700; letter-spacing: -0.5px; }
+        
+        /* --- Tabela --- */
+        .lg-table-wrapper { 
+            background-color: var(--bg-sidebar); 
+            border-radius: 8px; 
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            overflow-x: auto;
+        }
+
+        .lg-table { width: 100%; border-collapse: collapse; text-align: left; min-width: 1000px; }
+        
+        .lg-table th { 
+            padding: 18px 20px; 
+            font-size: 10px; 
+            text-transform: uppercase; 
+            color: var(--primary); 
+            font-weight: 800; 
+            letter-spacing: 1px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .lg-table td { 
+            padding: 14px 20px; 
+            border-bottom: 1px solid rgba(255, 255, 255, 0.02); 
+            vertical-align: middle;
+            font-size: 13px;
+        }
+
+        .lg-table tr:hover { background: rgba(255,255,255,0.01); }
+
+        /* Estilo Cliente */
+        .lg-client-cell { display: flex; align-items: center; gap: 10px; }
+        .lg-avatar { 
+            width: 32px; height: 32px; 
+            background: linear-gradient(45deg, #222, #333); 
+            border-radius: 6px; 
+            display: flex; align-items: center; justify-content: center;
+            color: var(--text-muted);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .lg-info-main { font-weight: 600; color: var(--text-main); display: block; }
+        .lg-info-sub { font-size: 11px; color: var(--primary); font-family: monospace; }
+
+        /* Ações */
+        .lg-actions { display: flex; gap: 6px; justify-content: flex-end; }
+        .lg-btn-icon { 
+            width: 30px; height: 30px;
+            background: transparent; 
+            border: 1px solid rgba(255, 255, 255, 0.05); 
+            color: var(--text-muted); 
+            border-radius: 6px; 
+            cursor: pointer; 
+            transition: all 0.2s; 
+            display: flex; align-items: center; justify-content: center; 
+            text-decoration: none; 
+        }
+        .lg-btn-icon:hover { background: var(--bg-card); color: var(--text-main); border-color: var(--primary); }
+        .lg-btn-icon.danger-hover:hover { background: rgba(150, 32, 32, 0.2); color: #ff5f5f; border-color: var(--danger); }
+        .lg-btn-icon svg { width: 14px; height: 14px; }
+
+        .lg-btn-add { 
+            text-decoration: none; background: var(--accent); color: white; 
+            padding: 10px 18px; border-radius: 6px; font-size: 11px; 
+            font-weight: 700; text-transform: uppercase; display: flex; 
+            align-items: center; gap: 8px; border: none; cursor: pointer;
+            transition: 0.3s;
+        }
+        .lg-btn-add:hover { filter: brightness(1.2); transform: translateY(-1px); }
+
+        /* Modal */
+        .lg-modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; z-index: 1000; opacity: 0; transition: 0.3s; }
+        .lg-modal-overlay.active { display: flex; opacity: 1; }
+        .lg-modal { background: var(--bg-sidebar); width: 90%; max-width: 380px; padding: 32px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.05); text-align: center; }
+        .lg-btn-confirm { background: var(--danger); color: white; padding: 10px 24px; border-radius: 4px; font-weight: 700; border: none; cursor: pointer; font-size: 12px; text-transform: uppercase; }
+        .lg-btn-cancel { background: transparent; color: var(--text-muted); padding: 10px 24px; border-radius: 4px; font-weight: 700; border: 1px solid var(--primary); cursor: pointer; font-size: 12px; text-transform: uppercase; }
+        
+        .text-accent { color: var(--accent); font-weight: 700; }
+        /* --- Custom Scrollbar Minimalista --- */
+
+/* 1. Largura da barra (vertical e horizontal) */
+::-webkit-scrollbar {
+    width: 5px;  /* Deixa ela bem fina */
+    height: 5px;
+}
+
+/* 2. Fundo da barra (o "trilho") */
+::-webkit-scrollbar-track {
+    background: transparent; /* Invisível para não poluir o layout */
+}
+
+/* 3. O "pegador" (a parte que desliza) */
+::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.1); /* Sutil no dark mode */
+    border-radius: 20px; /* Bordas totalmente arredondadas */
+    transition: background 0.3s ease;
+}
+
+/* 4. Efeito de hover - para dar feedback ao usuário */
+::-webkit-scrollbar-thumb:hover {
+    background-color: var(--primary); /* Ou var(--accent) se quiser destaque */
+}
+
+/* Para Firefox (suporte limitado, mas funcional) */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
+}
+    </style>
+</head>
+
+<body>
+    <div class="lg-modal-overlay" id="modalApagar">
+        <div class="lg-modal">
+            <div style="color: var(--danger); margin-bottom: 16px;"><i data-lucide="alert-triangle" style="width: 48px; height: 48px;"></i></div>
+            <h2 class="lg-modal-title">Excluir Atendimento?</h2>
+            <p class="lg-modal-text" style="color: var(--text-muted); margin-bottom: 24px;">Esta ação não poderá ser desfeita.</p>
+            <div class="lg-modal-actions" style="display: flex; gap: 10px; justify-content: center;">
+                <button class="lg-btn-cancel" onclick="fecharModal()">Voltar</button>
+                <button class="lg-btn-confirm" id="confirmarDelete">Excluir</button>
+            </div>
+        </div>
+    </div>
+
+    <nav class="lg-sidebar">
+        <a href="/atendimento/" class="lg-nav-item" title="Dashboard Atendimento">
+            <i data-lucide="layout-grid"></i>
+        </a>
+        <a href="/atendimento/create" class="lg-nav-item" title="Novo Atendimento">
+            <i data-lucide="calendar-plus"></i>
+        </a>
+        <a href="/atendimento/list" class="lg-nav-item" title="Lista de Atendimentos">
+            <i data-lucide="calendar-search"></i>
+        </a>
+
+        <div style="height: 1px; width: 30px; background: rgba(255,255,255,0.05); margin: 10px 0;"></div>
+
+        <a href="/user/create" class="lg-nav-item" title="Novo Usuário">
+            <i data-lucide="user-plus"></i>
+        </a>
+        <a href="/user/list" class="lg-nav-item" title="Lista de Usuários">
+            <i data-lucide="users"></i>
+        </a>
+
+        <div style="flex-grow: 1;"></div>
+
+        <a href="/logout" class="lg-nav-item" title="Sair">
+            <i data-lucide="log-out"></i>
+        </a>
+    </nav>
+
+    <main class="lg-main-container">
+        <div class="lg-breadcrumb">
+            <span>Plataforma</span>
+            <b>Lista de Atendimentos</b>
+        </div>
+
+        <header class="lg-header-flex">           
+            <h1 class="lg-display-1">Agenda de Atendimentos</h1>
+            <a href="/atendimento/create" class="lg-btn-add">
+                <i data-lucide="plus"></i> Novo Agendamento
+            </a>
+        </header>
+
+        <div class="lg-table-wrapper">
+            <table class="lg-table">
+                <thead>
+                    <tr>
+                        <th>Cliente</th>
+                        <th>Contato</th>
+                        <th>Data / Hora</th>
+                        <th>Nascimento</th>
+                        <th>Serviço</th>
+                        <th>Profissional</th>
+                        <th style="text-align: right;">Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% for(atendimento of atendimentos) { %> 
+                    <tr>
+                        <td>
+                            <div class="lg-client-cell">
+                                <div class="lg-avatar"><i data-lucide="user"></i></div>
+                                <div>
+                                    <span class="lg-info-main"><%= atendimento.nomeCliente %></span>
+                                    <span class="lg-info-sub">#<%= atendimento.id %></span>
+                                </div>
+                            </div>
+                        </td>
+                        <td><%= atendimento.telefone %></td>
+                        <td>
+                            <div style="display: flex; flex-direction: column;">
+                                <span><%= atendimento.dataAtendimento %></span>
+                                <span class="text-accent" style="font-size: 11px;"><%= atendimento.horarioAtendimento %></span>
+                            </div>
+                        </td>
+                        <td style="color: var(--text-muted);"><%= atendimento.dataNascimento %></td>
+                        <td>
+                            <span style="background: rgba(0, 75, 168, 0.1); color: #70a1ff; padding: 2px 8px; border-radius: 4px; font-size: 11px;">
+                                <%= atendimento.tipoServico %>
+                            </span>
+                        </td>
+                        <td>
+                            <div style="display: flex; align-items: center; gap: 5px;">
+                                <i data-lucide="clipboard-check" style="width: 12px; color: var(--primary);"></i>
+                                <%= atendimento.profissional %>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="lg-actions">
+                                <a href="/atendimento/edit/<%= atendimento.id %>" class="lg-btn-icon" title="Editar">
+                                    <i data-lucide="pencil"></i>
+                                </a>
+                                <button onclick="confirmarExclusao('<%= atendimento.id %>')" class="lg-btn-icon danger-hover" title="Excluir">
+                                    <i data-lucide="trash-2"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    <% } %> 
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <script>
+        lucide.createIcons();
+
+        let atendimentoIdParaApagar = null;
+        const modal = document.getElementById('modalApagar');
+
+        function confirmarExclusao(id) {
+            atendimentoIdParaApagar = id;
+            modal.classList.add('active');
+        }
+
+        function fecharModal() {
+            modal.classList.remove('active');
+            atendimentoIdParaApagar = null;
+        }
+
+        document.getElementById('confirmarDelete').addEventListener('click', async () => {
+            if (!atendimentoIdParaApagar) return;
+            try {
+                const response = await fetch("/atendimento/delete/" + atendimentoIdParaApagar, { method: 'DELETE' });
+                if(response.ok) location.reload();
+            } catch (err) { console.error(err); }
+        });
+
+        window.onclick = (e) => { if (e.target == modal) fecharModal(); }
+    </script>
+</body>
+</html>

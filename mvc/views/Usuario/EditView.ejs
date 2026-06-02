@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SGP - Editar Usuário</title>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700&display=swap');
+
+        :root {
+            --bg-body: #fec5bb;
+            --bg-sidebar: #fcd5ce;
+            --bg-input: #fae1dd;
+            --primary: #f8edeb;
+            --accent: #e8e8e4;
+            --danger: #d8e2dc;
+            --success: #c99e8b;
+            --text-main: #a58066;
+            --text-muted: #a17f61;
+            --border-radius: 4px;
+            --font: "Nunito", sans-serif;
+            --sidebar-width: 60px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            font-family: var(--font);
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* --- Sidebar Modular --- */
+        .lg-sidebar {
+            width: var(--sidebar-width);
+            background-color: var(--bg-sidebar);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px 0;
+            flex-shrink: 0;
+        }
+
+        .lg-nav-item {
+            color: var(--text-muted);
+            padding: 12px;
+            margin-bottom: 8px;
+            border-radius: var(--border-radius);
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+        }
+
+        .lg-nav-item:hover, .lg-nav-item.active {
+            background-color: rgba(255, 255, 255, 0.05);
+            color: var(--text-main);
+        }
+
+        .lg-nav-item svg { width: 20px; height: 20px; }
+
+        /* --- Layout Container --- */
+        .lg-main-container {
+            flex-grow: 1;
+            padding: 40px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        /* --- Breadcrumb --- */
+        .lg-breadcrumb {
+            display: flex; gap: 8px; font-size: 11px;
+            text-transform: uppercase; letter-spacing: 1px;
+            color: var(--text-muted); align-items: center;
+        }
+        .lg-breadcrumb span::after { content: '/'; margin-left: 8px; }
+        .lg-breadcrumb b { color: var(--text-main); }
+
+        /* --- Typography --- */
+        .lg-display-1 { font-size: 28px; font-weight: 700; margin-bottom: 4px; }
+        .lg-display-2 { font-size: 14px; color: var(--text-muted); line-height: 1.6; }
+
+        /* --- Form Modular --- */
+        .lg-form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-bottom: 16px;
+        }
+
+        .lg-label {
+            font-size: 10px;
+            text-transform: uppercase;
+            font-weight: 700;
+            color: var(--primary);
+            letter-spacing: 0.5px;
+        }
+
+        .lg-input {
+            background-color: var(--bg-input);
+            border: 1px solid var(--primary);
+            border-radius: var(--border-radius);
+            color: var(--text-main);
+            padding: 8px 12px;
+            font-family: var(--font);
+            font-size: 13px;
+            height: 38px;
+            width: 100%;
+            transition: all 0.2s;
+        }
+
+        .lg-input:focus {
+            outline: none;
+            border-color: var(--text-main);
+            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
+        }
+
+        /* --- Actions / Footer --- */
+        .lg-form-footer {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 24px;
+            gap: 12px;
+        }
+
+        .lg-btn {
+            padding: 0 24px;
+            height: 38px;
+            border-radius: var(--border-radius);
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            border: 1px solid var(--primary);
+            background-color: var(--bg-input);
+            color: var(--text-main);
+        }
+
+        .lg-btn-primary {
+            background: linear-gradient(to bottom, #ffd7ba, #fec89a);
+            border: none;
+        }
+
+        .lg-btn:hover {
+            filter: brightness(1.2);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        /* --- Modal Design (Feedback) --- */
+        .lg-modal-overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(4px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .lg-modal-overlay.active { display: flex; opacity: 1; }
+
+        .lg-modal {
+            background: var(--bg-sidebar);
+            width: 100%;
+            max-width: 400px;
+            padding: 32px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            text-align: center;
+            transform: translateY(20px);
+            transition: transform 0.3s ease;
+        }
+
+        .lg-modal-overlay.active .lg-modal { transform: translateY(0); }
+
+        .lg-modal-icon {
+            width: 60px; height: 60px;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 20px;
+        }
+
+        /* Estilização Dinâmica por Classe */
+        .lg-modal.success .lg-modal-icon { background: rgba(27, 94, 32, 0.1); color: #4ade80; }
+        .lg-modal.error .lg-modal-icon { background: rgba(150, 32, 32, 0.1); color: var(--danger); }
+
+        .lg-modal-title { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+        .lg-modal-text { color: var(--text-muted); font-size: 14px; margin-bottom: 24px; line-height: 1.5; }
+
+        .lg-row { display: flex; gap: 20px; }
+        .lg-col-6 { flex: 1; }
+    </style>
+</head>
+
+<body>
+    <div class="lg-modal-overlay" id="modalFeedback">
+        <div class="lg-modal" id="modalContent">
+            <div class="lg-modal-icon">
+                <i id="modalIcon" data-lucide="check-circle" style="width: 32px; height: 32px;"></i>
+            </div>
+            <h2 class="lg-modal-title" id="modalTitle">Título</h2>
+            <p class="lg-modal-text" id="modalMessage">Mensagem do alerta.</p>
+            
+            <div class="lg-modal-actions">
+                <button class="lg-btn lg-btn-primary" id="btnFecharModal">Entendido</button>
+            </div>
+        </div>
+    </div>
+
+   
+    <nav class="lg-sidebar">
+        <a href="/atendimento/" class="lg-nav-item" title="Dashboard Atendimento">
+            <i data-lucide="layout-grid"></i>
+        </a>
+        <a href="/atendimento/create" class="lg-nav-item" title="Novo Atendimento">
+            <i data-lucide="calendar-plus"></i>
+        </a>
+        <a href="/atendimento/list" class="lg-nav-item" title="Lista de Atendimentos">
+            <i data-lucide="calendar-search"></i>
+        </a>
+
+        <div style="height: 1px; width: 30px; background: rgba(255,255,255,0.05); margin: 10px 0;"></div>
+
+        <a href="/user/create" class="lg-nav-item" title="Novo Usuário">
+            <i data-lucide="user-plus"></i>
+        </a>
+        <a href="/user/list" class="lg-nav-item" title="Lista de Usuários">
+            <i data-lucide="users"></i>
+        </a>
+
+        <div style="flex-grow: 1;"></div>
+
+        <a href="/logout" class="lg-nav-item" title="Sair">
+            <i data-lucide="log-out"></i>
+        </a>
+    </nav>
+
+    <main class="lg-main-container">
+        <div class="lg-breadcrumb">
+            <span>Plataforma</span>
+            <span>Usuários</span>
+            <b>Editar Perfil</b>
+        </div>
+
+        <header>
+            <h1 class="lg-display-1">Edição de Usuário</h1>
+            <p class="lg-display-2">
+                Atualize as informações de <b><%= usuario.username %></b>. 
+                Deixe a senha em branco para manter a atual.
+            </p>
+        </header>
+
+        <form class="lg-form" id="formEdicao">
+            <input value="<%= usuario.id %>" type="hidden" id="usuarioId">
+
+            <div class="lg-row">
+                <div class="lg-col-6 lg-form-group">
+                    <label class="lg-label" for="username">Username</label>
+                    <input class="lg-input" value="<%= usuario.nome %>" type="text" id="username" required>
+                </div>
+                <div class="lg-col-6 lg-form-group">
+                    <label class="lg-label" for="email">E-mail</label>
+                    <input class="lg-input" value="<%= usuario.email %>" type="email" id="email" required>
+                </div>
+            </div>
+
+            <div class="lg-row">
+                <div class="lg-col-6 lg-form-group">
+                    <label class="lg-label" for="senha">Nova Senha (opcional)</label>
+                    <input class="lg-input" type="password" id="senha" placeholder="••••••••">
+                </div>
+                <div class="lg-col-6"></div>
+            </div>
+
+            <div class="lg-form-footer">
+                <a href="/user/list" class="lg-btn">Cancelar</a>
+                <button class="lg-btn lg-btn-primary" type="submit" id="btnSalvar">
+                    Salvar Alterações
+                </button>
+            </div>
+        </form>
+    </main>
+
+    <script>
+        lucide.createIcons();
+
+        const form = document.getElementById("formEdicao");
+        const modalOverlay = document.getElementById("modalFeedback");
+        const modalContent = document.getElementById("modalContent");
+        const btnFechar = document.getElementById("btnFecharModal");
+
+        let redirectUrl = null;
+
+        function abrirModal(tipo, titulo, mensagem, redirect = null) {
+            modalContent.className = `lg-modal ${tipo}`;
+            document.getElementById("modalTitle").innerText = titulo;
+            document.getElementById("modalMessage").innerText = mensagem;
+            
+            const iconElement = document.getElementById("modalIcon");
+            iconElement.setAttribute('data-lucide', tipo === 'success' ? 'check-circle' : 'alert-circle');
+            
+            redirectUrl = redirect;
+            lucide.createIcons();
+            modalOverlay.classList.add('active');
+        }
+
+        btnFechar.addEventListener("click", () => {
+            modalOverlay.classList.remove('active');
+            if (redirectUrl) window.location.href = redirectUrl;
+        });
+
+        form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const btnSalvar = document.getElementById("btnSalvar");
+            
+            btnSalvar.disabled = true;
+            btnSalvar.innerText = "Salvando...";
+
+            const payload = {
+                id: document.getElementById("usuarioId").value,
+                username: document.getElementById("username").value,
+                email: document.getElementById("email").value,
+                senha: document.getElementById("senha").value
+            };
+
+            try {
+                const response = await fetch("/user/edit", {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (response.ok) {
+                    abrirModal('success', 'Atualizado!', 'As informações do usuário foram salvas com sucesso.', '/user/list');
+                } else {
+                    abrirModal('error', 'Erro ao Salvar', 'Não foi possível atualizar os dados. Tente novamente mais tarde.');
+                    btnSalvar.disabled = false;
+                    btnSalvar.innerText = "Salvar Alterações";
+                }
+            } catch (err) {
+                abrirModal('error', 'Falha na Rede', 'Verifique sua conexão com a internet.');
+                btnSalvar.disabled = false;
+                btnSalvar.innerText = "Salvar Alterações";
+            }
+        });
+    </script>
+</body>
+</html>
